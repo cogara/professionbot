@@ -21,7 +21,10 @@ client.once('ready', () => {
         (docs).forEach(enchanter => {
             //add professions from current db values
             Object.keys(enchanter).forEach(prof => {
-                if (prof != 'player' && prof != '_id') professions.push(prof);
+                if (prof != 'player' && prof != '_id') 
+                {
+                    if (!professions.includes(prof)) professions.push(prof);
+                }
             })
         })
     })
@@ -102,13 +105,13 @@ client.on('messageCreate', async msg => {
                 let foundRecipe = false
                 let crafters = formatResults(docs,regex)
                 Object.keys(crafters).forEach(profession => {
-                    if (!(crafters[profession] && Object.keys(crafters[profession]).length === 0 && crafters[profession].constructor === Object)) response += `= ${profession.toUpperCase()} =\n`
+                    if (!(crafters[profession] && Object.keys(crafters[profession]).length === 0 && crafters[profession].constructor === Object)) response += `\n= ${profession.toUpperCase()} =\n`
                     Object.keys(crafters[profession]).forEach(recipe => {
                         foundRecipe = true
                         
                         response += `${recipe} :: ${crafters[profession][recipe].join(', ')} \n`
                     })
-                    response += '\n'
+                    
                 })
                 if (response.length > 3950) {
                     msg.channel.send('Search term is too broad - please narrow and try again')
