@@ -5,27 +5,32 @@ var Datastore = require('nedb')
   , db = new Datastore({ filename: './professions.db', autoload: true });
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS , Intents.FLAGS.GUILD_MESSAGES]});
-const professions = [
-    'engineering',
-    'enchanting',
-    'blacksmithing',
-    'jewelcrafting',
-    'tailoring',
-    'leatherworking',
-    'cooking',
-    'mining',
-    'alchemy'
-]
+const professions = []
+
+//change to who is running the bot for the error messages
+const botOwner = 'Elemenoh';
 
 client.once('ready', () => {
-	console.log('Ready!');
+    console.log('Ready!');
+    db.find({}, (err,docs) => {
+        if (err) 
+        {
+            console.log(err)
+            return
+        }
+        (docs).forEach(enchanter => {
+            //add professions from current db values
+            Object.keys(enchanter).forEach(prof => {
+                if (prof != 'player' && prof != '_id') professions.push(prof);
+            })
+        })
+    })
 });
 
 client.on('messageCreate', async msg => {
     if (msg.author.bot) return;
     let attachmentText = "";
     if (msg.attachments.size > 0) {
-        console.log('found attachment');
         let file = msg.attachments.first().url;
         try {
             //get file contents
@@ -56,52 +61,15 @@ client.on('messageCreate', async msg => {
         }
         catch (error) {
             console.log(`${msg.author.username} failed import:`, error);
-            msg.channel.send(`${msg.author.username}: Something went wrong - send feet pics to Elemenoh to investigate this issue`);
+            msg.channel.send(`${msg.author.username}: Something went wrong - send feet pics to ${botOwner} to investigate this issue`);
             msg.delete();
         }
     }
 
     if (msg.content.split(' ')[0] === 'import') {
-        console.log(`Importing ${msg.author.username} data`)
         let importData = msg.content.split(' ');
         importData.shift();
-        // if (msg.attachments.size > 0) {
-        //     var file = msg.attachments.first().url
-        //     try {
-            
-        //         // fetch the file from the external URL
-        //         const response = await fetch(file);
-            
-        //         // if there was an error send a message with the status
-        //         if (!response.ok) {
-        //             msg.delete();
-        //             return msg.channel.send(
-        //                 'There was an error with fetching the file:',
-        //                 response.statusText,
-        //             );
-        //         }
-            
-        //         // take the response stream and read it to completion
-        //         const text = await response.text();
-            
-        //         if (text) {
-        //             //for when an import is just not big enough 
-        //             // if (text.substring(0,6)) {
-        //             //     text.slice(6,text.length);
-        //             // }
-        //             dbInsertData(msg, text);
-        //             // db.insert(JSON.parse(text));
-        //             // msg.delete();
-        //             // msg.channel.send(`Imported ${JSON.parse(text).player} professions`);
-        //         }
-        //     } catch (error) {
-        //         console.log(error);
-        //         msg.channel.send(`${msg.author.username}: Something went wrong - send feet pics to Elemenoh to investigate this issue`);
-        //         msg.delete();
-        //     }
-        // } else {
         try {
-            console.log('ZZZ WHAT AM I Zzz', importData);
             if (importData.length > 0) dbInsertData(msg, importData.join(' '))
             // db.insert(JSON.parse(importData.join(' ')));
             // msg.channel.send(`Imported ${JSON.parse(importData.join(' ')).player}'s professions`);
@@ -109,7 +77,7 @@ client.on('messageCreate', async msg => {
         }   
         catch (error) {
             console.log(`${msg.author.username} import failed:`, error)
-            msg.channel.send(`${msg.author.username}: Something went wrong - send feet pics to Elemenoh to investigate this issue`);
+            msg.channel.send(`${msg.author.username}: Something went wrong - send feet pics to ${botOwner} to investigate this issue`);
             msg.delete();
         }
         // }
@@ -125,7 +93,7 @@ client.on('messageCreate', async msg => {
         var recipe = data.join(' ');
         var regex = new RegExp(recipe,'ig')
         db.find({'$or' : professions.map(profession => {
-            //already forgot how this shit worked
+            //loop through professions to find if any recipe matches search terms
             let obj = {}
             obj[profession] = regex
             return obj
@@ -187,7 +155,6 @@ dbInsertData = (msg, data) => {
     let profession = '';
     let existingId = '';
     let isUpdate = false;
-    // console.log(data)
     professions.map(prof => {
         if (JSON.parse(data)[prof]) {
             profession = prof;
@@ -201,7 +168,6 @@ dbInsertData = (msg, data) => {
             $exists : true
         }
     }, (err,docs) => {
-        console.log(docs);
         if (docs[0]) {
             existingId = docs[0]._id;
             console.log('ID to remove: ', existingId)
