@@ -8,7 +8,7 @@ This bot is intended to allow players to import their professions into the disco
 - As users get new recipes and wish to update, they may re-copy a new import string and it will update their info in the local database.
 
 ## Bot Requirements
-- Node v16.6+ 
+- Node v16.6+ (confirmed needs to be latest version, 16.6 otherwise you will run into errors when trying to start the bot)
 - npm v7.2+ 
 - These are what versions this was built on - so just be sure it's at least these versions
 
@@ -16,7 +16,9 @@ This bot is intended to allow players to import their professions into the disco
 - Clone repo
 - create a .env file (will need to add your bot's token from the next category into this file.)
 - `npm install` to install npm packages
-- `node index.js` to run the bot
+- Modify the `const botOwner = 'Elemenoh';` in the top of index.js to your own name for error messages. 
+- `node index.js` to run the bot (must finish below section before this step)
+- Bot must remain running in your command line to function. Leave running on an extra computer, or look at something like digital ocean for a $5 droplet per month to host it on if you do not want to run it yourself. W
 
 ## Connecting to Discord
 - Create bot via [Discord Development Portal](https://discord.com/developers/applications)
