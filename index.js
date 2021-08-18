@@ -158,6 +158,7 @@ dbInsertData = (msg, data) => {
     let profession = '';
     let existingId = '';
     let isUpdate = false;
+    if (!professions.includes(JSON.parse(data)[prof])) professions.push(JSON.parse(data)[prof]);
     professions.map(prof => {
         if (JSON.parse(data)[prof]) {
             profession = prof;
