@@ -5,30 +5,33 @@ var Datastore = require('nedb')
   , db = new Datastore({ filename: './professions.db', autoload: true });
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS , Intents.FLAGS.GUILD_MESSAGES]});
-const professions = []
+let professions = []
 
 //change to who is running the bot for the error messages
 const botOwner = 'Elemenoh';
 
 client.once('ready', () => {
     console.log('Ready!');
-    db.find({}, (err,docs) => {
-        if (err) 
-        {
-            console.log(err)
-            return
-        }
-        (docs).forEach(enchanter => {
-            //add professions from current db values
-            Object.keys(enchanter).forEach(prof => {
-                if (prof != 'player' && prof != '_id') 
-                {
-                    if (!professions.includes(prof)) professions.push(prof);
-                }
-            })
-        })
-    })
+    loadProfessions();
+    // db.find({}, (err,docs) => {
+    //     if (err) 
+    //     {
+    //         console.log(err)
+    //         return
+    //     }
+    //     (docs).forEach(player => {
+    //         //add professions from current db values
+    //         Object.keys(player).forEach(prof => {
+    //             if (prof != 'player' && prof != '_id') 
+    //             {
+    //                 if (!professions.includes(prof)) professions.push(prof);
+    //             }
+    //         })
+    //     })
+    // })
 });
+
+
 
 client.on('messageCreate', async msg => {
     if (msg.author.bot) return;
@@ -158,7 +161,7 @@ dbInsertData = (msg, data) => {
     let profession = '';
     let existingId = '';
     let isUpdate = false;
-    if (!professions.includes(JSON.parse(data)[prof])) professions.push(JSON.parse(data)[prof]);
+    
     professions.map(prof => {
         if (JSON.parse(data)[prof]) {
             profession = prof;
@@ -183,6 +186,27 @@ dbInsertData = (msg, data) => {
         db.insert(JSON.parse(data));
         msg.delete();
         msg.channel.send(`${(isUpdate) ? 'Updated' : 'Inserted'} ${JSON.parse(data).player} professions`);
+        loadProfessions();
+    })
+}
+
+loadProfessions = () => {
+    professions = [];
+    db.find({}, (err,docs) => {
+        if (err) 
+        {
+            console.log(err)
+            return
+        }
+        (docs).forEach(player => {
+            //add professions from current db values
+            Object.keys(player).forEach(prof => {
+                if (prof != 'player' && prof != '_id') 
+                {
+                    if (!professions.includes(prof)) professions.push(prof);
+                }
+            })
+        })
     })
 }
 
