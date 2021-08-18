@@ -96,7 +96,7 @@ client.on('messageCreate', async msg => {
     } else if (msg.content.split(' ')[0] === 'search') {
         var data = msg.content.split(' ');
         data.shift();
-        var recipe = data.join(' ');
+        var recipe = data.join('.*');
         var regex = new RegExp(recipe,'ig')
         db.find({'$or' : professions.map(profession => {
             //loop through professions to find if any recipe matches search terms
