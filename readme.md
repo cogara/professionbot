@@ -28,8 +28,9 @@ This bot is intended to allow players to import their professions into the disco
     - `TOKEN=botsecrettoken`
   - Generate invite link
     - Select "bot" in the scope category
-    - Select "Send Messages", "Read Message History", and "Manage Messages". You may exclude manage messages, but without it, the bot won't be able to delete the import message and may leave additional bloat in the channel. 
+    - Don't give any permissions yet - you don't want it to see any channels except the profession channel you dedicate to it. 
     - Copy the link provided, and invite the bot to your server. 
+    - Add a custom permission override for the bot to view your channel - giving it manage message (to delete imports), read message history, view channel, and send message.
 
 ## WoW Addon
 - provided is `ProfessionBotExporter`. This is an addon meant to allow users to create an export string from their client to copy/paste into the bot's channel. This was modified from [Profession BOT - Exporter](https://www.curseforge.com/wow/addons/profession-bot-exporter) to fit the needs of this bot. 

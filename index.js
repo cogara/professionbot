@@ -6,6 +6,7 @@ var Datastore = require('nedb')
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS , Intents.FLAGS.GUILD_MESSAGES]});
 let professions = []
+let maxMessageLength = 3950 //change this to lower if non-nitro server
 
 //change to who is running the bot for the error messages
 const botOwner = 'Elemenoh';
@@ -116,7 +117,7 @@ client.on('messageCreate', async msg => {
                     })
                     
                 })
-                if (response.length > 3950) {
+                if (response.length > maxMessageLength) {
                     msg.channel.send('Search term is too broad - please narrow and try again')
                     return
                 }
