@@ -1,10 +1,19 @@
 const dotenv = require('dotenv').config();
-const { Client, Intents } = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
 const fetch = require('node-fetch');
 var Datastore = require('nedb')
   , db = new Datastore({ filename: './professions.db', autoload: true });
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS , Intents.FLAGS.GUILD_MESSAGES]});
+const client = new Client({ 
+    intents: [
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildBans,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+      ],
+});
+
 let professions = []
 let maxMessageLength = 3950 //change this to lower if non-nitro server
 
@@ -12,7 +21,7 @@ let maxMessageLength = 3950 //change this to lower if non-nitro server
 const botOwner = 'Elemenoh';
 
 client.once('ready', () => {
-    console.log('Ready!');
+    console.log('Ready!aaaa');
     loadProfessions();
     // db.find({}, (err,docs) => {
     //     if (err) 
@@ -37,6 +46,7 @@ client.once('ready', () => {
 client.on('messageCreate', async msg => {
     if (msg.author.bot) return;
     let attachmentText = "";
+    console.log(msg);
     if (msg.attachments.size > 0) {
         let file = msg.attachments.first().url;
         try {
@@ -99,6 +109,7 @@ client.on('messageCreate', async msg => {
         data.shift();
         var recipe = data.join('.*');
         var regex = new RegExp(recipe,'ig')
+        console.log('bot is active?');
         db.find({'$or' : professions.map(profession => {
             //loop through professions to find if any recipe matches search terms
             let obj = {}
@@ -209,6 +220,7 @@ loadProfessions = () => {
             })
         })
     })
+    console.log('done loading');
 }
 
 client.login(process.env.TOKEN);
