@@ -18,7 +18,7 @@ This bot is intended to allow players to import their professions into the disco
 - `npm install` to install npm packages
 - Modify the `const botOwner = 'Elemenoh';` in the top of index.js to your own name for error messages. 
 - `node index.js` to run the bot (must finish below section before this step)
-- Bot must remain running in your command line to function. Leave running on an extra computer, or look at something like digital ocean for a $5 droplet per month to host it on if you do not want to run it yourself. W
+- Bot must remain running in your command line to function. Leave running on an extra computer, or look at something like digital ocean for a $5 droplet per month to host it on if you do not want to run it yourself.
 
 ## Connecting to Discord
 - Create bot via [Discord Development Portal](https://discord.com/developers/applications)
