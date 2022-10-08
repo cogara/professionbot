@@ -1,18 +1,27 @@
 const dotenv = require('dotenv').config();
-const { Client, Intents } = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
 const fetch = require('node-fetch');
 var Datastore = require('nedb')
   , db = new Datastore({ filename: './professions.db', autoload: true });
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS , Intents.FLAGS.GUILD_MESSAGES]});
+const client = new Client({ 
+    intents: [
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildBans,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+      ],
+});
+
 let professions = []
-let maxMessageLength = 3950 //change this to lower if non-nitro server
+let maxMessageLength = 2000 //change this to lower if non-nitro server
 
 //change to who is running the bot for the error messages
 const botOwner = 'Elemenoh';
 
 client.once('ready', () => {
-    console.log('Ready!');
+    console.log('Ready!aaaa');
     loadProfessions();
     // db.find({}, (err,docs) => {
     //     if (err) 
@@ -209,6 +218,7 @@ loadProfessions = () => {
             })
         })
     })
+    console.log('done loading');
 }
 
 client.login(process.env.TOKEN);

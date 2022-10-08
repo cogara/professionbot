@@ -18,7 +18,7 @@ SlashCmdList['PROFESSIONBOT'] = function(msg)
 			local name, _, type, _, _, _, _ = GetCraftInfo(i)
 			if (name and type ~= 'header') then
 				if recipeCount ~= 0 then recipe = recipe .. ',' end
-				recipe = recipe .. '"' .. name .. '#' .. getItemId('craft', i) .. '"'
+				recipe = recipe .. '"' .. name .. '"'
 				-- if i < 40 then 
 				-- 	text = text .. app
 				-- elseif i < 80 then
@@ -44,7 +44,8 @@ SlashCmdList['PROFESSIONBOT'] = function(msg)
 			local name, type, _, _, _, _ = GetTradeSkillInfo(i)
 			if (name and type ~= 'header') then
 				if recipeCount ~= 0 then recipe = recipe .. ',' end
-				recipe = recipe .. '"' .. name .. '#' .. getItemId('trade', i) .. '"'
+				if itemId == nil then itemId = '' end
+				recipe = recipe .. '"' .. name .. '"'
 				recipeCount = recipeCount + 1
 			end
 		end
@@ -122,22 +123,6 @@ function createExporterWindow()
 	frame.editBox:SetScript('OnEscapePressed', function() frame:Hide() end)
 	frame.scrollFrame:SetScrollChild(frame.editBox)	
 end
-
-function getItemId(prof_type, index)
-  local itemLink, itemID
-  if (prof_type == 'trade') then
-    itemLink = GetTradeSkillItemLink(index)
-    if (not itemLink) then return end
-    itemID = itemLink:match('item:(%d+)')
-  elseif (prof_type == 'craft') then
-    itemLink = GetCraftItemLink(index)
-    if (not itemLink) then return end
-    itemID = itemLink:match('enchant:(%d+)')
-  end
-  return tonumber(itemID)
-end
-
--- BASE 64 Codeing
 
 local band, lshift, rshift = bit.band, bit.lshift, bit.rshift
 local t = {}
