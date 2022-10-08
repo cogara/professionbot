@@ -1,5 +1,5 @@
 ## Interface: 20501
-## Title: RmytProfessions
+## Title: ProfessionBotExporter
 ## Version: 0.0.1
 
-RmytProfessions.lua
+ProfessionBotExporter.lua

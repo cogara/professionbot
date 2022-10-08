@@ -15,7 +15,7 @@ const client = new Client({
 });
 
 let professions = []
-let maxMessageLength = 3950 //change this to lower if non-nitro server
+let maxMessageLength = 2000 //change this to lower if non-nitro server
 
 //change to who is running the bot for the error messages
 const botOwner = 'Elemenoh';
@@ -46,7 +46,6 @@ client.once('ready', () => {
 client.on('messageCreate', async msg => {
     if (msg.author.bot) return;
     let attachmentText = "";
-    console.log(msg);
     if (msg.attachments.size > 0) {
         let file = msg.attachments.first().url;
         try {
@@ -109,7 +108,6 @@ client.on('messageCreate', async msg => {
         data.shift();
         var recipe = data.join('.*');
         var regex = new RegExp(recipe,'ig')
-        console.log('bot is active?');
         db.find({'$or' : professions.map(profession => {
             //loop through professions to find if any recipe matches search terms
             let obj = {}
