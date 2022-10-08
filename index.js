@@ -15,13 +15,13 @@ const client = new Client({
 });
 
 let professions = []
-let maxMessageLength = 2000 //change this to lower if non-nitro server
+let maxMessageLength = process.env.MESSAGELENGTH //change this to lower if non-nitro server
 
 //change to who is running the bot for the error messages
-const botOwner = 'Elemenoh';
+const botOwner = process.env.OWNER;
 
 client.once('ready', () => {
-    console.log('Ready!aaaa');
+    console.log('Ready!');
     loadProfessions();
     // db.find({}, (err,docs) => {
     //     if (err) 
@@ -97,12 +97,42 @@ client.on('messageCreate', async msg => {
             msg.delete();
         }
         // }
+    } else if ((`${msg.content.split(' ')[0]} ${msg.content.split(' ')[1]}`) === 'set main') {
+        var data = msg.content.split(' ');
+        data.shift();
+        data.shift();
+        if (data.length == 2) {
+            db.update(
+                { player: data[0] }, 
+                { $set: { mainName : data[1] }},
+                { multi: true},
+                (err, numUpdated) => {
+                    console.log(`added ${data[1]} as a main for ${data[0]} in ${numUpdated} rows`)
+                }
+            )
+            msg.delete();
+            msg.channel.send(`Added '${data[1]}' as a main for '${data[0]}'`)
+        } else {
+            msg.channel.send('Invalid format. Must be `set main Altname Mainname`')
+        }
     } else if (msg.content === 'enchanters') {
         db.find({'enchanting' : {'$exists':true}}, (err, docs) => {
             var enchanters = [];
             docs.map(enchanter => enchanters.push(enchanter.player));
             msg.reply('Enchanters: ' + enchanters.join(','))
         })
+    // } else if (msg.content === 'leatherworkers') {
+    //     db.find({'leatherworking' : {'$exists':true}}, (err, docs) => {
+    //         var crafter = [];
+    //         docs.map(doc => crafter.push(doc.player));
+    //         msg.reply('Leatherworkers: ' + crafter.join(','))
+    //     })
+    // } else if (msg.content === 'blacksmiths') {
+    //     db.find({'blacksmithing' : {'$exists':true}}, (err, docs) => {
+    //         var crafter = [];
+    //         docs.map(doc => crafter.push(doc.player));
+    //         msg.reply('Blacksmiths: ' + crafter.join(','))
+    //     })
     } else if (msg.content.split(' ')[0] === 'search') {
         var data = msg.content.split(' ');
         data.shift();
@@ -147,30 +177,23 @@ formatResults = (crafters, search) => {
             if (player[profession]) {
                 let recipes = player[profession].filter((i) => i.match(search))
                 recipes.forEach(recipe => {
-                    crafterList[profession][recipe] = (crafterList[profession][recipe]) ? [].concat(crafterList[profession][recipe],player.player) : [].concat(player.player);
+                    let playerName = (player.mainName) ? `${player.player} (${player.mainName})` : player.player // add main to an alt's name if exist
+                    crafterList[profession][recipe] = (crafterList[profession][recipe]) ? [].concat(crafterList[profession][recipe], playerName) : [].concat(playerName);
                 })
             }          
         })     
     })
     return crafterList;
-    // return {
-    //     'profession' : [
-    //         {'Recipe' : ['Crafter','Crafter']},
-    //         {'Recipe' : ['Crafter','Crafter']},
-    //         {'Recipe' : ['Crafter','Crafter']},
-    //     ],
-    //     'profession' : [
-    //         {'Recipe' : ['Crafter','Crafter']},
-    //         {'Recipe' : ['Crafter','Crafter']},
-    //         {'Recipe' : ['Crafter','Crafter']},
-    //     ]
-    // }
 }
 
 dbInsertData = (msg, data) => {
     let profession = '';
     let existingId = '';
     let isUpdate = false;
+
+    data = data
+        .replace('"S"',"S")
+        .replace('"other dumb double quote BS"','fixed double quote bs')
     
     professions.map(prof => {
         if (JSON.parse(data)[prof]) {
@@ -211,7 +234,7 @@ loadProfessions = () => {
         (docs).forEach(player => {
             //add professions from current db values
             Object.keys(player).forEach(prof => {
-                if (prof != 'player' && prof != '_id') 
+                if (prof != 'player' && prof != '_id' && prof != 'mainName')
                 {
                     if (!professions.includes(prof)) professions.push(prof);
                 }
