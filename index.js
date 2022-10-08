@@ -15,10 +15,10 @@ const client = new Client({
 });
 
 let professions = []
-let maxMessageLength = 1950 //change this to lower if non-nitro server
+let maxMessageLength = process.env.MESSAGELENGTH //change this to lower if non-nitro server
 
 //change to who is running the bot for the error messages
-const botOwner = 'Elemenoh';
+const botOwner = process.env.OWNER;
 
 client.once('ready', () => {
     console.log('Ready!');
