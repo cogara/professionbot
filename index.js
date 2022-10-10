@@ -97,7 +97,7 @@ client.on('messageCreate', async msg => {
             msg.delete();
         }
         // }
-    } else if ((`${msg.content.split(' ')[0]} ${msg.content.split(' ')[1]}`) === 'set main') {
+    } else if ((`${msg.content.split(' ')[0]} ${msg.content.split(' ')[1]}`).toLocaleLowerCase() === 'set main') {
         var data = msg.content.split(' ');
         data.shift();
         data.shift();
@@ -115,7 +115,7 @@ client.on('messageCreate', async msg => {
         } else {
             msg.channel.send('Invalid format. Must be `set main Altname Mainname`')
         }
-    } else if (msg.content === 'enchanters') {
+    } else if (msg.content.toLocaleLowerCase() === 'enchanters') {
         db.find({'enchanting' : {'$exists':true}}, (err, docs) => {
             var enchanters = [];
             docs.map(enchanter => enchanters.push(enchanter.player));
@@ -133,7 +133,7 @@ client.on('messageCreate', async msg => {
     //         docs.map(doc => crafter.push(doc.player));
     //         msg.reply('Blacksmiths: ' + crafter.join(','))
     //     })
-    } else if (msg.content.split(' ')[0] === 'search') {
+    } else if (msg.content.split(' ')[0].toLocaleLowerCase() === 'search') {
         var data = msg.content.split(' ');
         data.shift();
         var recipe = data.join('.*');
