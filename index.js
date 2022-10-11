@@ -109,6 +109,7 @@ client.on('messageCreate', async msg => {
                 { multi: true},
                 (err, numUpdated) => {
                     console.log(`added ${data[1]} as a main for ${data[0]} in ${numUpdated} rows`)
+                    loadProfessions();
                 }
             )
             msg.delete();
@@ -134,6 +135,7 @@ client.on('messageCreate', async msg => {
                                 console.log(`added ${data[0]} as a potion master`)
                                 msg.delete();
                                 msg.channel.send(`Added ${data[0]} as a potion master`)
+                                loadProfessions();
                             }
                         )
                     } else {
@@ -168,6 +170,7 @@ client.on('messageCreate', async msg => {
                                 console.log(`added ${data[0]} as a elixir master`)
                                 msg.delete();
                                 msg.channel.send(`Added ${data[0]} as a elixir master`)
+                                loadProfessions();
                             }
                         )
                     } else {
