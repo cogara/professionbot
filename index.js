@@ -212,7 +212,6 @@ client.on('messageCreate', async msg => {
                         response += `${recipe} :: ${crafters[profession][recipe].join(', ')} \n`
                     })
                     if (profession === 'alchemy' && Object.keys(crafters[profession]).length > 0) {
-                        console.log(Object.keys(crafters[profession]).length);
                         if (specialites.potion.length > 0 || specialites.elixir.length > 0) {
                             response += `\n`
                         }
