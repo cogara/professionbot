@@ -15,6 +15,7 @@ const client = new Client({
 });
 
 let professions = []
+let specialites = {}
 let maxMessageLength = process.env.MESSAGELENGTH //change this to lower if non-nitro server
 
 //change to who is running the bot for the error messages
@@ -189,18 +190,6 @@ client.on('messageCreate', async msg => {
             docs.map(enchanter => enchanters.push(enchanter.player));
             msg.reply('Enchanters: ' + enchanters.join(','))
     })
-    // } else if (msg.content === 'leatherworkers') {
-    //     db.find({'leatherworking' : {'$exists':true}}, (err, docs) => {
-    //         var crafter = [];
-    //         docs.map(doc => crafter.push(doc.player));
-    //         msg.reply('Leatherworkers: ' + crafter.join(','))
-    //     })
-    // } else if (msg.content === 'blacksmiths') {
-    //     db.find({'blacksmithing' : {'$exists':true}}, (err, docs) => {
-    //         var crafter = [];
-    //         docs.map(doc => crafter.push(doc.player));
-    //         msg.reply('Blacksmiths: ' + crafter.join(','))
-    //     })
     } else if (msg.content.split(' ')[0].toLocaleLowerCase() === 'search') {
         var data = msg.content.split(' ');
         data.shift();
@@ -222,6 +211,17 @@ client.on('messageCreate', async msg => {
                         
                         response += `${recipe} :: ${crafters[profession][recipe].join(', ')} \n`
                     })
+                    if (profession === 'alchemy' && Object.keys(crafters[profession]).length > 0) {
+                        if (specialites.potion.length > 0 || specialites.elixir.length > 0) {
+                            response += `\n`
+                        }
+                        if (specialites.potion.length > 0) {
+                            response += `Potion Masters :: ${specialites.potion.join(', ')} \n`;
+                        }
+                        if (specialites.elixir.length > 0) {
+                            response += `Elixir Masters :: ${specialites.elixir.join(', ')} \n`;
+                        }
+                    }
                     
                 })
                 if (response.length > maxMessageLength) {
@@ -237,12 +237,13 @@ client.on('messageCreate', async msg => {
 
 formatResults = (crafters, search) => {
     let crafterList = {}
-
+    // console.log('professions', professions);
     //create keys on main return object
     professions.map(profession => crafterList[profession] = {})
     crafters.map(player => {
         professions.map(profession => {
             if (player[profession]) {
+                // console.log(profession);
                 let recipes = player[profession].filter((i) => i.match(search))
                 recipes.forEach(recipe => {
                     let playerName = (player.mainName) ? `${player.player} (${player.mainName})` : player.player // add main to an alt's name if exist
@@ -293,6 +294,10 @@ dbInsertData = (msg, data) => {
 
 loadProfessions = () => {
     professions = [];
+    specialites = {
+        elixir: [],
+        potion: []
+    }
     db.find({}, (err,docs) => {
         if (err) 
         {
@@ -302,9 +307,17 @@ loadProfessions = () => {
         (docs).forEach(player => {
             //add professions from current db values
             Object.keys(player).forEach(prof => {
-                if (prof != 'player' && prof != '_id' && prof != 'mainName')
-                {
+                // console.log(prof);
+                if (prof !== '_id' && prof !== 'player' && prof !== 'mainName' && prof !== 'potionMaster' && prof !== 'elixirMaster') {
                     if (!professions.includes(prof)) professions.push(prof);
+                }
+                else {
+                    if (prof === 'potionMaster') {
+                        specialites.potion.push(player.player);
+                    }
+                    if (prof === 'elixirMaster') {
+                        specialites.elixir.push(player.player);
+                    }
                 }
             })
         })
