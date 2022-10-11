@@ -168,6 +168,7 @@ client.on('messageCreate', async msg => {
                                 console.log(`added ${data[0]} as a elixir master`)
                                 msg.delete();
                                 msg.channel.send(`Added ${data[0]} as a elixir master`)
+                                loadProfessions();
                             }
                         )
                     } else {
