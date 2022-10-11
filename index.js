@@ -115,12 +115,80 @@ client.on('messageCreate', async msg => {
         } else {
             msg.channel.send('Invalid format. Must be `set main Altname Mainname`')
         }
+    } else if ((`${msg.content.split(' ')[0]} ${msg.content.split(' ')[1]} ${msg.content.split(' ')[2]}`).toLocaleLowerCase() === 'set potion master') {
+        var data = msg.content.split(' ');
+        data.shift();
+        data.shift();
+        data.shift();
+        if (data.length == 1) {
+            db.find(
+                {player: data[0], 'alchemy': {$exists: true}},
+                (err, docs) => {
+                    if (docs.length > 0) {
+                        db.update(
+                            { _id: docs[0]._id }, 
+                            { $set: { potionMaster : true }},
+                            { multi: true},
+                            (err, numUpdated) => {
+                                console.log(`added ${data[0]} as a potion master`)
+                                msg.delete();
+                                msg.channel.send(`Added ${data[0]} as a potion master`)
+                            }
+                        )
+                    } else {
+                        msg.channel.send(`${data[0]} not listed as alchemist`)
+                    }
+                }
+            )
+        } else {
+            msg.channel.send('Invalid format. Must be `set potion master player`')
+        }
+    } else if ('potion masters'.match(msg.content.toLocaleLowerCase())) {
+        db.find({ potionMaster : true}, (err, docs) => {
+            var potionMasters = [];
+            docs.map(alchemist => potionMasters.push(alchemist.player));
+            msg.reply('Potion Masters: ' + potionMasters.join(', '))
+    })
+    } else if ((`${msg.content.split(' ')[0]} ${msg.content.split(' ')[1]} ${msg.content.split(' ')[2]}`).toLocaleLowerCase() === 'set elixir master') {
+        var data = msg.content.split(' ');
+        data.shift();
+        data.shift();
+        data.shift();
+        if (data.length == 1) {
+            db.find(
+                {player: data[0], 'alchemy': {$exists: true}},
+                (err, docs) => {
+                    if (docs.length > 0) {
+                        db.update(
+                            { _id: docs[0]._id }, 
+                            { $set: { elixirMaster : true }},
+                            { multi: true},
+                            (err, numUpdated) => {
+                                console.log(`added ${data[0]} as a elixir master`)
+                                msg.delete();
+                                msg.channel.send(`Added ${data[0]} as a elixir master`)
+                            }
+                        )
+                    } else {
+                        msg.channel.send(`${data[0]} not listed as alchemist`)
+                    }
+                }
+            )
+        } else {
+            msg.channel.send('Invalid format. Must be `set elixir master player`')
+        }
+    } else if ('elixir masters'.match(msg.content.toLocaleLowerCase())) {
+        db.find({ potionMaster : true}, (err, docs) => {
+            var masters = [];
+            docs.map(alchemist => masters.push(alchemist.player));
+            msg.reply('Elixir Masters: ' + masters.join(', '))
+    })
     } else if (msg.content.toLocaleLowerCase() === 'enchanters') {
         db.find({'enchanting' : {'$exists':true}}, (err, docs) => {
             var enchanters = [];
             docs.map(enchanter => enchanters.push(enchanter.player));
             msg.reply('Enchanters: ' + enchanters.join(','))
-        })
+    })
     // } else if (msg.content === 'leatherworkers') {
     //     db.find({'leatherworking' : {'$exists':true}}, (err, docs) => {
     //         var crafter = [];
